@@ -1,6 +1,6 @@
 import { API_KEY } from './apiKey';
 
-export function getApiEndpoint(
+function getApiEndpoint(
 	rulesSystem = 'tabletop+rpg',
 	searchTerm = '',
 	startIndex = 0,

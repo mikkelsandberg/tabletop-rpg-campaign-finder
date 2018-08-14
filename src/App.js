@@ -10,6 +10,7 @@ class App extends Component {
     this.handleRulesSelectorChange = this.handleRulesSelectorChange.bind(this);
     this.handleFormSubmission = this.handleFormSubmission.bind(this);
     this.handleLoadMore = this.handleLoadMore.bind(this);
+    this.includeIfExists = this.includeIfExists.bind(this);
 
     this.state = {
       books: null,
@@ -17,6 +18,7 @@ class App extends Component {
       searchTerm: '',
       startIndex: 0,
       maxResults: 10,
+      moreResultsAvailable: true,
     };
   }
 
@@ -26,13 +28,21 @@ class App extends Component {
       this.state.searchTerm,
       this.state.startIndex,
       this.state.maxResults
-    ).then(data => {
-      this.setState(prevState => ({
-        ...this.state,
-        books: data,
-        startIndex: prevState.startIndex + this.state.maxResults,
-      }));
-    });
+    )
+      .then(data => {
+        this.setState(prevState => ({
+          ...this.state,
+          books: data,
+          startIndex: prevState.startIndex + this.state.maxResults,
+        }));
+      })
+      .then(() => {
+        this.setState({
+          ...this.state,
+          moreResultsAvailable:
+            this.state.books.items.length % this.state.maxResults === 0,
+        });
+      });
   }
 
   handleSearchFieldChange(e) {
@@ -57,12 +67,20 @@ class App extends Component {
       this.state.searchTerm,
       this.state.startIndex,
       this.state.maxResults
-    ).then(data => {
-      this.setState(prevState => ({
-        ...this.state,
-        books: data,
-      }));
-    });
+    )
+      .then(data => {
+        this.setState(prevState => ({
+          ...this.state,
+          books: data,
+        }));
+      })
+      .then(() => {
+        this.setState({
+          ...this.state,
+          moreResultsAvailable:
+            this.state.books.items.length % this.state.maxResults === 0,
+        });
+      });
   }
 
   handleLoadMore() {
@@ -71,18 +89,32 @@ class App extends Component {
       this.state.searchTerm,
       this.state.startIndex,
       this.state.maxResults
-    ).then(data => {
-      this.setState(prevState => {
-        return {
+    )
+      .then(data => {
+        this.setState(prevState => ({
           ...prevState,
           books: {
             ...prevState.books,
             items: prevState.books.items.concat(data.items),
           },
           startIndex: prevState.startIndex + this.state.maxResults,
-        };
+        }));
+      })
+      .then(() => {
+        this.setState({
+          ...this.state,
+          moreResultsAvailable:
+            this.state.books.items.length % this.state.maxResults === 0,
+        });
       });
-    });
+  }
+
+  includeIfExists(data, contentBefore, contentAfter) {
+    return data !== undefined && data !== '' && data !== null
+      ? `${contentBefore !== undefined ? `${contentBefore}` : ''}${data}${
+          contentAfter !== undefined ? `${contentAfter}` : ''
+        }`
+      : null;
   }
 
   render() {
@@ -98,7 +130,8 @@ class App extends Component {
               onChange={this.handleRulesSelectorChange}
             >
               <option value="tabletop+rpg">Tabletop RPG</option>
-              <option value="dnd">DnD</option>
+              <option value="dnd+rpg">DnD</option>
+              <option value="pathfinder+rpg">Pathfinder</option>
             </select>
             <span>campaign, that has</span>
             <input
@@ -109,11 +142,22 @@ class App extends Component {
           </form>
 
           {this.state.books !== null &&
-            this.state.books.items.map((book, id = 0) => {
+            this.state.books.items.map(book => {
               return (
-                <article key={id}>
-                  <h2>{book.volumeInfo.title}</h2>
-                  <p>{book.volumeInfo.description}</p>
+                <article key={book.etag}>
+                  <h2>
+                    <a
+                      href={this.includeIfExists(
+                        book.volumeInfo.canonicalVolumeLink
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {this.includeIfExists(book.volumeInfo.title)}
+                      {this.includeIfExists(book.volumeInfo.subtitle, ': ')}
+                    </a>
+                  </h2>
+                  <p>{this.includeIfExists(book.volumeInfo.description)}</p>
                   <p>
                     {book.volumeInfo.categories !== undefined &&
                       `Categories:${book.volumeInfo.categories.map(
@@ -124,7 +168,12 @@ class App extends Component {
               );
             })}
 
-          <button onClick={this.handleLoadMore}>Load More</button>
+          <button
+            onClick={this.handleLoadMore}
+            disabled={!this.state.moreResultsAvailable}
+          >
+            Load More
+          </button>
         </section>
       </div>
     );
