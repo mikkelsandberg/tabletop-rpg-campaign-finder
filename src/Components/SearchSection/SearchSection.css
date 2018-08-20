@@ -1,0 +1,37 @@
+.searchSection {
+	margin-top: 1em;
+}
+
+.searchSection__inputFields {
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	-ms-align-items: center;
+	align-items: center;
+	justify-content: center;
+	-webkit-flex-wrap: wrap;
+	-moz-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
+	-o-flex-wrap: wrap;
+	flex-wrap: wrap;
+}
+
+.searchSection__inputFields > *:not(:first-child) {
+	margin-left: 1em;
+}
+
+.searchSection__buttonWrapper {
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	-webkit-flex: 1 0 100%;
+	-moz-flex: 1 0 100%;
+	-ms-flex: 1 0 100%;
+	-o-flex: 1 0 100%;
+	flex: 1 0 100%;
+	justify-content: center;
+}

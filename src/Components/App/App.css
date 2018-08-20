@@ -1,0 +1,25 @@
+.app:after {
+	content: '';
+	background: rgb(255, 253, 188);
+	background: linear-gradient(
+		25deg,
+		rgba(255, 253, 188, 1) 0%,
+		rgba(254, 213, 255, 1) 100%
+	);
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+}
+
+.app__header {
+	padding: 1em 0;
+}
+
+.app__header__text {
+	font-size: 3em;
+	line-height: 1;
+	text-align: center;
+}
