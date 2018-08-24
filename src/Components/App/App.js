@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getBooks } from '../../util/SearchBooks';
+import SearchBooks from '../../util/SearchBooks';
 import SearchSection from '../SearchSection/SearchSection';
 import BookList from '../BookList/BookList';
 import LoadMoreButton from '../LoadMoreButton/LoadMoreButton';
@@ -44,7 +44,7 @@ class App extends Component {
         loading: true,
       },
       () => {
-        getBooks(
+        /*getBooks(
           this.state.rulesSystem,
           this.state.searchTerm,
           this.state.startIndex,
@@ -73,13 +73,13 @@ class App extends Component {
               });
             }
             return;
-          });
+          });*/
       }
     );
   }
 
   handleLoadMore() {
-    getBooks(
+    /*getBooks(
       this.state.rulesSystem,
       this.state.searchTerm,
       this.state.startIndex,
@@ -96,7 +96,7 @@ class App extends Component {
           moreResultsAvailable:
             this.state.books.length % this.state.maxResults === 0,
         });
-      });
+      });*/
   }
 
   resetSearch(e) {
@@ -112,7 +112,7 @@ class App extends Component {
         loading: true,
       },
       () => {
-        getBooks(
+        /*getBooks(
           this.state.rulesSystem,
           this.state.searchTerm,
           this.state.startIndex,
@@ -130,7 +130,7 @@ class App extends Component {
               moreResultsAvailable:
                 this.state.books.length % this.state.maxResults === 0,
             });
-          });
+          });*/
       }
     );
   }
@@ -146,53 +146,62 @@ class App extends Component {
   render() {
     return (
       <div className="app">
-        <header className="app__header">
-          <h1 className="app__header__text">Tabletop RPG Campaign Finder</h1>
-          <SearchSection
-            handleFormSubmission={this.handleFormSubmission}
-            handleFieldChange={this.handleFieldChange}
-            rulesSystem={this.state.rulesSystem}
-            searchTerm={this.state.searchTerm}
-            maxResults={this.state.maxResults}
-            books={this.state.books}
-            resetSearch={this.resetSearch}
-          />
-        </header>
-        <section className="app__body">
-          <section className="app__body__results">
-            {this.state.books === null ? (
-              this.state.loading ? (
-                <section className="app__body__loading">
-                  <h2 className="app__body__loading__text">Loading&hellip;</h2>
-                </section>
-              ) : this.state.error ? (
-                <section className="app__body__error">
-                  <h2 className="app__body__error__text">
-                    Uh oh! Looks like there was an error. Please try a different
-                    search.
-                  </h2>
-                </section>
+        <SearchBooks
+          rulesSystem={this.state.rulesSystem}
+          searchTerm={this.state.searchTerm}
+          startIndex={this.state.startIndex}
+          maxResults={this.state.maxResults}
+        >
+          <header className="app__header">
+            <h1 className="app__header__text">Tabletop RPG Campaign Finder</h1>
+            <SearchSection
+              handleFormSubmission={this.handleFormSubmission}
+              handleFieldChange={this.handleFieldChange}
+              rulesSystem={this.state.rulesSystem}
+              searchTerm={this.state.searchTerm}
+              maxResults={this.state.maxResults}
+              books={this.state.books}
+              resetSearch={this.resetSearch}
+            />
+          </header>
+          <section className="app__body">
+            <section className="app__body__results">
+              {this.state.books === null ? (
+                this.state.loading ? (
+                  <section className="app__body__loading">
+                    <h2 className="app__body__loading__text">
+                      Loading&hellip;
+                    </h2>
+                  </section>
+                ) : this.state.error ? (
+                  <section className="app__body__error">
+                    <h2 className="app__body__error__text">
+                      Uh oh! Looks like there was an error. Please try a
+                      different search.
+                    </h2>
+                  </section>
+                ) : (
+                  <section className="app__body__blank">
+                    <h2 className="app__body__blank__text">
+                      Enter some search terms and hit the "search" button.
+                    </h2>
+                  </section>
+                )
               ) : (
-                <section className="app__body__blank">
-                  <h2 className="app__body__blank__text">
-                    Enter some search terms and hit the "search" button.
-                  </h2>
-                </section>
-              )
-            ) : (
-              <BookList
-                books={this.state.books}
-                includeIfExists={this.includeIfExists}
-              />
-            )}
+                <BookList
+                  books={this.state.books}
+                  includeIfExists={this.includeIfExists}
+                />
+              )}
+            </section>
           </section>
-        </section>
-        <footer className="app__footer">
-          {this.state.moreResultsAvailable &&
-            !this.state.error && (
-              <LoadMoreButton handleLoadMore={this.handleLoadMore} />
-            )}
-        </footer>
+          <footer className="app__footer">
+            {this.state.moreResultsAvailable &&
+              !this.state.error && (
+                <LoadMoreButton handleLoadMore={this.handleLoadMore} />
+              )}
+          </footer>
+        </SearchBooks>
       </div>
     );
   }

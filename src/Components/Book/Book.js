@@ -17,13 +17,13 @@ export default function Book(props) {
 				</a>
 			</h2>
 			{book.description !== undefined && (
-				<p>{Parser(includeIfExists(book.description))}</p>
+				<div>{Parser(includeIfExists(book.description))}</div>
 			)}
 			{book.categories !== undefined && (
 				<p>
 					{`Categories: `}
-					{book.categories.map(category => {
-						return <span>{`${category}`}</span>;
+					{book.categories.map((category, id = 0) => {
+						return <span key={id++}>{`${category}`}</span>;
 					})}
 				</p>
 			)}
