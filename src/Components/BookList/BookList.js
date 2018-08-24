@@ -8,7 +8,7 @@ export default function BookList(props) {
 		books !== null &&
 		books.map(book => {
 			return (
-				<Book key={book.etag} book={book} includeIfExists={includeIfExists} />
+				<Book key={book.id} book={book} includeIfExists={includeIfExists} />
 			);
 		})
 	);

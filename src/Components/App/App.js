@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { search } from '../../util/GoogleBooks';
+import { getBooks } from '../../util/SearchBooks';
 import SearchSection from '../SearchSection/SearchSection';
 import BookList from '../BookList/BookList';
 import LoadMoreButton from '../LoadMoreButton/LoadMoreButton';
@@ -44,7 +44,7 @@ class App extends Component {
         loading: true,
       },
       () => {
-        search(
+        getBooks(
           this.state.rulesSystem,
           this.state.searchTerm,
           this.state.startIndex,
@@ -79,7 +79,7 @@ class App extends Component {
   }
 
   handleLoadMore() {
-    search(
+    getBooks(
       this.state.rulesSystem,
       this.state.searchTerm,
       this.state.startIndex,
@@ -112,7 +112,7 @@ class App extends Component {
         loading: true,
       },
       () => {
-        search(
+        getBooks(
           this.state.rulesSystem,
           this.state.searchTerm,
           this.state.startIndex,

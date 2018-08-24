@@ -1,4 +1,5 @@
 import React from 'react';
+import Parser from 'html-react-parser';
 
 export default function Book(props) {
 	const { book, includeIfExists } = props;
@@ -7,19 +8,25 @@ export default function Book(props) {
 		<article>
 			<h2>
 				<a
-					href={includeIfExists(book.volumeInfo.canonicalVolumeLink)}
+					href={includeIfExists(book.link)}
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					{includeIfExists(book.volumeInfo.title)}
-					{includeIfExists(book.volumeInfo.subtitle, ': ')}
+					{includeIfExists(book.title)}
+					{includeIfExists(book.subtitle, ': ')}
 				</a>
 			</h2>
-			<p>{includeIfExists(book.volumeInfo.description)}</p>
-			<p>
-				{book.volumeInfo.categories !== undefined &&
-					`Categories:${book.volumeInfo.categories.map(category => category)}`}
-			</p>
+			{book.description !== undefined && (
+				<p>{Parser(includeIfExists(book.description))}</p>
+			)}
+			{book.categories !== undefined && (
+				<p>
+					{`Categories: `}
+					{book.categories.map(category => {
+						return <span>{`${category}`}</span>;
+					})}
+				</p>
+			)}
 		</article>
 	);
 }
