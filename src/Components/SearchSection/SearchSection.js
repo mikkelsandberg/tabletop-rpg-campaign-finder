@@ -13,6 +13,15 @@ export default function SearchSection(props) {
 		resetSearch,
 	} = props;
 
+	const maxResultsOptions = [];
+	for (let i = 10; i <= 50; i += 10) {
+		maxResultsOptions.push(
+			<option key={i} value={i}>
+				{i}
+			</option>
+		);
+	}
+
 	return (
 		<form className="searchSection" onSubmit={handleFormSubmission}>
 			<section className="searchSection__inputFields">
@@ -38,19 +47,16 @@ export default function SearchSection(props) {
 					placeholder="keywords"
 					value={searchTerm}
 				/>
-				<input
-					className="searchSection__maxResults"
-					type="range"
+				<select
 					id="maxResults"
 					name="maxResults"
-					min={1}
-					max={40}
 					value={parseInt(maxResults, 10)}
 					onChange={e =>
 						handleFieldChange('maxResults', parseInt(e.target.value, 10))
 					}
-				/>
-				<span className="searchSection__maxResults__counter">{maxResults}</span>
+				>
+					{maxResultsOptions}
+				</select>
 			</section>
 			<section className="searchSection__buttonWrapper">
 				{books !== null && (

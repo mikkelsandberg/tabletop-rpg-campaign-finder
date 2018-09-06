@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import SearchBooks from '../../util/SearchBooks';
+import { getBooks } from '../../util/GetBooks';
 import SearchSection from '../SearchSection/SearchSection';
 import BookList from '../BookList/BookList';
 import LoadMoreButton from '../LoadMoreButton/LoadMoreButton';
@@ -17,7 +17,7 @@ class App extends Component {
     this.includeIfExists = this.includeIfExists.bind(this);
 
     this.state = {
-      books: null,
+      bookList: [],
       rulesSystem: 'tabletop+rpg',
       searchTerm: '',
       startIndex: 0,
@@ -39,26 +39,30 @@ class App extends Component {
 
     this.setState(
       {
-        books: null,
+        bookList: [],
         startIndex: 0,
         loading: true,
+        error: false,
       },
       () => {
-        /*getBooks(
+        getBooks(
           this.state.rulesSystem,
           this.state.searchTerm,
           this.state.startIndex,
           this.state.maxResults
         )
           .then(data => {
-            if (data === undefined) {
+            console.log('data', data);
+            if (data.length === 0) {
               this.setState({
+                bookList: data,
                 error: true,
                 moreResultsAvailable: false,
+                loading: false,
               });
             } else {
               this.setState({
-                books: data,
+                bookList: data,
                 startIndex: this.state.startIndex + this.state.maxResults,
                 error: false,
                 loading: false,
@@ -66,20 +70,17 @@ class App extends Component {
             }
           })
           .then(() => {
-            if (this.state.books !== null) {
-              this.setState({
-                moreResultsAvailable:
-                  this.state.books.length % this.state.maxResults === 0,
-              });
-            }
-            return;
-          });*/
+            this.setState({
+              moreResultsAvailable:
+                this.state.bookList.length % this.state.maxResults === 0,
+            });
+          });
       }
     );
   }
 
   handleLoadMore() {
-    /*getBooks(
+    getBooks(
       this.state.rulesSystem,
       this.state.searchTerm,
       this.state.startIndex,
@@ -87,16 +88,16 @@ class App extends Component {
     )
       .then(data => {
         this.setState({
-          books: this.state.books.concat(data),
+          bookList: this.state.bookList.concat(data),
           startIndex: this.state.startIndex + this.state.maxResults,
         });
       })
       .then(() => {
         this.setState({
           moreResultsAvailable:
-            this.state.books.length % this.state.maxResults === 0,
+            this.state.bookList.length % this.state.maxResults === 0,
         });
-      });*/
+      });
   }
 
   resetSearch(e) {
@@ -104,7 +105,7 @@ class App extends Component {
 
     this.setState(
       {
-        books: null,
+        bookList: [],
         rulesSystem: 'tabletop+rpg',
         searchTerm: '',
         startIndex: 0,
@@ -112,7 +113,7 @@ class App extends Component {
         loading: true,
       },
       () => {
-        /*getBooks(
+        getBooks(
           this.state.rulesSystem,
           this.state.searchTerm,
           this.state.startIndex,
@@ -120,7 +121,7 @@ class App extends Component {
         )
           .then(data => {
             this.setState({
-              books: data,
+              bookList: data,
               startIndex: this.state.startIndex + this.state.maxResults,
               loading: false,
             });
@@ -128,9 +129,9 @@ class App extends Component {
           .then(() => {
             this.setState({
               moreResultsAvailable:
-                this.state.books.length % this.state.maxResults === 0,
+                this.state.bookList.length % this.state.maxResults === 0,
             });
-          });*/
+          });
       }
     );
   }
@@ -146,62 +147,53 @@ class App extends Component {
   render() {
     return (
       <div className="app">
-        <SearchBooks
-          rulesSystem={this.state.rulesSystem}
-          searchTerm={this.state.searchTerm}
-          startIndex={this.state.startIndex}
-          maxResults={this.state.maxResults}
-        >
-          <header className="app__header">
-            <h1 className="app__header__text">Tabletop RPG Campaign Finder</h1>
-            <SearchSection
-              handleFormSubmission={this.handleFormSubmission}
-              handleFieldChange={this.handleFieldChange}
-              rulesSystem={this.state.rulesSystem}
-              searchTerm={this.state.searchTerm}
-              maxResults={this.state.maxResults}
-              books={this.state.books}
-              resetSearch={this.resetSearch}
-            />
-          </header>
-          <section className="app__body">
-            <section className="app__body__results">
-              {this.state.books === null ? (
-                this.state.loading ? (
-                  <section className="app__body__loading">
-                    <h2 className="app__body__loading__text">
-                      Loading&hellip;
-                    </h2>
-                  </section>
-                ) : this.state.error ? (
-                  <section className="app__body__error">
-                    <h2 className="app__body__error__text">
-                      Uh oh! Looks like there was an error. Please try a
-                      different search.
-                    </h2>
-                  </section>
-                ) : (
-                  <section className="app__body__blank">
-                    <h2 className="app__body__blank__text">
-                      Enter some search terms and hit the "search" button.
-                    </h2>
-                  </section>
-                )
+        <header className="app__header">
+          <h1 className="app__header__text">Tabletop RPG Campaign Finder</h1>
+          <SearchSection
+            handleFormSubmission={this.handleFormSubmission}
+            handleFieldChange={this.handleFieldChange}
+            rulesSystem={this.state.rulesSystem}
+            searchTerm={this.state.searchTerm}
+            maxResults={this.state.maxResults}
+            bookList={this.state.bookList}
+            resetSearch={this.resetSearch}
+          />
+        </header>
+        <section className="app__body">
+          <section className="app__body__results">
+            {this.state.bookList.length === 0 ? (
+              this.state.loading ? (
+                <section className="app__body__loading">
+                  <h2 className="app__body__loading__text">Loading&hellip;</h2>
+                </section>
+              ) : this.state.error ? (
+                <section className="app__body__error">
+                  <h2 className="app__body__error__text">
+                    Uh oh! Looks like there was an error. Please try a different
+                    search.
+                  </h2>
+                </section>
               ) : (
-                <BookList
-                  books={this.state.books}
-                  includeIfExists={this.includeIfExists}
-                />
-              )}
-            </section>
+                <section className="app__body__blank">
+                  <h2 className="app__body__blank__text">
+                    Enter some search terms and hit the "search" button.
+                  </h2>
+                </section>
+              )
+            ) : (
+              <BookList
+                bookList={this.state.bookList}
+                includeIfExists={this.includeIfExists}
+              />
+            )}
           </section>
-          <footer className="app__footer">
-            {this.state.moreResultsAvailable &&
-              !this.state.error && (
-                <LoadMoreButton handleLoadMore={this.handleLoadMore} />
-              )}
-          </footer>
-        </SearchBooks>
+        </section>
+        <footer className="app__footer">
+          {this.state.moreResultsAvailable &&
+            !this.state.error && (
+              <LoadMoreButton handleLoadMore={this.handleLoadMore} />
+            )}
+        </footer>
       </div>
     );
   }
